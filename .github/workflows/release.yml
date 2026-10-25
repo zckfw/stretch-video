@@ -1,0 +1,80 @@
+name: Release executables
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt pyinstaller==6.22.3
+      - run: python -m PyInstaller --noconfirm --onefile --windowed --name stretch-video main.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: dist/stretch-video.exe
+          if-no-files-found: error
+
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt pyinstaller==6.22.3
+      - run: python -m PyInstaller --noconfirm --onefile --name stretch-video main.py
+      - name: Check Linux executable
+        run: |
+          set +e
+          QT_QPA_PLATFORM=offscreen timeout 10s ./dist/stretch-video
+          result=$?
+          if [ "$result" -ne 124 ]; then
+            echo "The application exited unexpectedly: $result"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-x64
+          path: dist/stretch-video
+          if-no-files-found: error
+
+  release:
+    needs: [windows, linux]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-x64
+          path: windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-x64
+          path: linux
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv windows/stretch-video.exe stretch-video-windows-x64.exe
+          mv linux/stretch-video stretch-video-linux-x64
+          chmod +x stretch-video-linux-x64
+          sha256sum stretch-video-windows-x64.exe stretch-video-linux-x64 > SHA256SUMS.txt
+          printf '%s\n' \
+            'Baixe o executável para Windows ou Linux. O FFmpeg precisa estar instalado e disponível no PATH.' \
+            'No Linux, execute: chmod +x stretch-video-linux-x64 && ./stretch-video-linux-x64' \
+            > release-notes.txt
+          gh release create "$GITHUB_REF_NAME" \
+            stretch-video-windows-x64.exe stretch-video-linux-x64 SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "stretch-video $GITHUB_REF_NAME" --notes-file release-notes.txt
