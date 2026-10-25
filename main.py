@@ -1,4 +1,4 @@
-from stretch_video.app import main
+from stretch_video.ui.window import main
 
 
 if __name__ == "__main__":
