@@ -1,8 +1,8 @@
 # stretch-video
 
-Aplicativo simples para esticar um vídeo até a resolução escolhida, sem manter a proporção original.
+Aplicativo para deixar um vídeo esticado (stretched) na reoslução escolhida.
 
-Arraste um vídeo para a janela ou clique na área central para selecioná-lo. Escolha a largura e a altura e clique em **Criar vídeo**. O resultado é salvo ao lado do original como `nome_stretched.mp4`. Se esse nome já existir, o aplicativo usa `_stretched_2`, `_stretched_3` e assim por diante. O vídeo original não é alterado.
+Arraste um vídeo para a janela ou clique para selecioná-lo. Escolha a resolução e clique em **Esticar vídeo**. O resultado é salvo no mesmo caminho do vídeo original, como `nome_stretched.mp4`. Se esse nome já existir, usa `_stretched_2`, `_stretched_3` etc...
 
 ## Como usar
 
