@@ -6,9 +6,9 @@ Arraste um vídeo para a janela ou clique para selecioná-lo. Escolha a resoluç
 
 ## Como usar
 
-Baixe o executável de Windows ou Linux na [página de releases](https://github.com/zckfw/stretch-video/releases). No Linux, permita a execução com `chmod +x stretch-video-linux-x64`.
+Baixe o executável para Windows na [página de releases](https://github.com/zckfw/stretch-video/releases).
 
-O [FFmpeg](https://ffmpeg.org/download.html) precisa estar disponível no `PATH` em ambos os sistemas.
+O [FFmpeg](https://ffmpeg.org/download.html) precisa estar disponível no `PATH`.
 
 Para executar pelo código-fonte, use Python 3.10+:
 
